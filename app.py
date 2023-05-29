@@ -1,51 +1,39 @@
 import streamlit as st
 
-import requests
+import ytthumb
 
-def save_image(url):
+st.title("YouTube Thumbnail Downloader")
 
-    response = requests.get(url)
+video_input = st.text_input("Enter YouTube video URL or video ID")
 
-    if response.status_code == 200:
+if st.button("Download Thumbnail"):
 
-        return response.content
+    try:
 
-    return None
+        if "|" in video_input:
 
-def main():
+            video_id, quality = video_input.split("|", 1)
 
-    st.title("YouTube Thumbnail Downloader")
+        else:
 
-    video_input = st.text_input("Enter YouTube video URL or video ID")
+            video_id = video_input
 
-    if st.button("Download Thumbnail"):
+            quality = "sd"
 
-        try:
+            
 
-            thumbnail_url = f"https://img.youtube.com/vi/{video_input}/maxresdefault.jpg"
+        thumbnail_url = ytthumb.thumbnail(video_id, quality)
 
-            image_data = save_image(thumbnail_url)
+        
 
-            if image_data is not None:
+        st.image(thumbnail_url, use_column_width=True)
 
-                st.image(image_data, use_column_width=True, caption='Thumbnail')
+        
 
-                download_link = f'<a href="{thumbnail_url}" download="thumbnail.jpg">Download Thumbnail</a>'
+    except Exception as e:
 
-                st.markdown(download_link, unsafe_allow_html=True)
-
-            else:
-
-                st.warning("Thumbnail not found for the given input.")
-
-        except Exception as e:
-
-            st.error(f"An error occurred: {str(e)}")
-
-if __name__ == "__main__":
-
-    main()
+        st.error(f"An error occurred: {str(e)}")
 
 
 
-                
+            
