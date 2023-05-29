@@ -1,10 +1,6 @@
 import streamlit as st
 
-import ytthumb
-
 import requests
-
-from io import BytesIO
 
 def save_image(url):
 
@@ -26,37 +22,17 @@ def main():
 
         try:
 
-            if "|" in video_input:
+            image_url = f"https://img.youtube.com/vi/{video_input}/maxresdefault.jpg"
 
-                video_id, default_quality = video_input.split("|", 1)
+            image_data = save_image(image_url)
 
-            else:
+            if image_data is not None:
 
-                video_id = video_input
+                st.image(image_data, use_column_width=True, caption='Thumbnail')
 
-                default_quality = "sd"
+                download_link = f'<a href="data:image/jpeg;base64,{image_data.decode("utf-8")}" download="thumbnail.jpg">Download Thumbnail</a>'
 
-            thumbnail_urls = ytthumb.get_thumbnail_urls(video_id)
-
-            if thumbnail_urls:
-
-                st.markdown("### Thumbnail Qualities:")
-
-                for quality, url in thumbnail_urls.items():
-
-                    if quality == default_quality:
-
-                        st.markdown(f"- **{quality}**: [Download]({url}) (default)")
-
-                    else:
-
-                        st.markdown(f"- **{quality}**: [Download]({url})")
-
-                image_data = save_image(thumbnail_urls[default_quality])
-
-                if image_data is not None:
-
-                    st.image(image_data, use_column_width=True, caption='Thumbnail')
+                st.markdown(download_link, unsafe_allow_html=True)
 
             else:
 
