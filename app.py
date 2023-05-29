@@ -2,6 +2,20 @@ import streamlit as st
 
 import ytthumb
 
+import requests
+
+from io import BytesIO
+
+def save_image(url):
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+
+        return response.content
+
+    return None
+
 def main():
 
     st.title("YouTube Thumbnail Downloader")
@@ -14,19 +28,35 @@ def main():
 
             if "|" in video_input:
 
-                video_id, quality = video_input.split("|", 1)
+                video_id, default_quality = video_input.split("|", 1)
 
             else:
 
                 video_id = video_input
 
-                quality = "sd"
+                default_quality = "sd"
 
-            thumbnail_url = ytthumb.thumbnail(video_id, quality)
+            thumbnail_urls = ytthumb.get_thumbnail_urls(video_id)
 
-            if thumbnail_url:
+            if thumbnail_urls:
 
-                st.image(thumbnail_url, use_column_width=True)
+                st.markdown("### Thumbnail Qualities:")
+
+                for quality, url in thumbnail_urls.items():
+
+                    if quality == default_quality:
+
+                        st.markdown(f"- **{quality}**: [Download]({url}) (default)")
+
+                    else:
+
+                        st.markdown(f"- **{quality}**: [Download]({url})")
+
+                image_data = save_image(thumbnail_urls[default_quality])
+
+                if image_data is not None:
+
+                    st.image(image_data, use_column_width=True, caption='Thumbnail')
 
             else:
 
@@ -39,4 +69,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
