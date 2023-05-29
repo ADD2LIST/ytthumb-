@@ -22,15 +22,15 @@ def main():
 
         try:
 
-            image_url = f"https://img.youtube.com/vi/{video_input}/maxresdefault.jpg"
+            thumbnail_url = f"https://img.youtube.com/vi/{video_input}/maxresdefault.jpg"
 
-            image_data = save_image(image_url)
+            image_data = save_image(thumbnail_url)
 
             if image_data is not None:
 
                 st.image(image_data, use_column_width=True, caption='Thumbnail')
 
-                download_link = f'<a href="data:image/jpeg;base64,{image_data.decode("utf-8")}" download="thumbnail.jpg">Download Thumbnail</a>'
+                download_link = f'<a href="{thumbnail_url}" download="thumbnail.jpg">Download Thumbnail</a>'
 
                 st.markdown(download_link, unsafe_allow_html=True)
 
@@ -45,3 +45,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
+
+
+                
